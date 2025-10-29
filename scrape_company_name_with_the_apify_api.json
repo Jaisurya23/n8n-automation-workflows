@@ -1,0 +1,224 @@
+{
+  "name": "scrape company name with the apify api",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=REPLACE_WITH_APIFY_API_TOKEN",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "REPLACE_WITH_APIFY_API_TOKEN"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            },
+            {
+              "name": "clean",
+              "value": "true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"searchStringsArray\": [\n    \"Aftermarker manufacture company in Michigan\"\n  ],\n  \"maxCrawledPlacesPerSearch\": 1000\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        60
+      ],
+      "id": "f5a38dfc-8eca-495b-be28-4216d92ab45d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ",
+          "mode": "list",
+          "cachedResultName": "company details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1793769941,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ/edit#gid=1793769941"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.title }}",
+            "Category": "={{ $json.categoryName }}",
+            "Address": "={{ $json.address }}",
+            "City": "={{ $json.city }}",
+            "State ": "={{ $json.state }}",
+            "Country code": "={{ $json.countryCode }}",
+            "phone number": "={{ $json.phone }}",
+            "Web site ": "={{ $json.searchPageUrl }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "State ",
+              "displayName": "State ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Country code",
+              "displayName": "Country code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Web site ",
+              "displayName": "Web site ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone number",
+              "displayName": "phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        60
+      ],
+      "id": "f827368a-7620-4a0d-8172-01ab643f3b33",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        60
+      ],
+      "id": "ec15c1ac-6cc6-428a-b0fc-1556e0361773",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "## Scrape company name\n\n-- The search query is on the json format to change that to modify the data\n\n-- Max is 200 even it is 1000",
+        "height": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        110,
+        -160
+      ],
+      "id": "192ccad3-3e39-4780-82c1-c5251f306c6f",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "35bb7333-62a1-45b0-ae16-f30db6d47506",
+  "meta": {
+    "instanceId": "754f1595a5333f98c71a385ae239a3c6d1271f14801fcf61c4ad94ceec623443"
+  },
+  "id": "g8Al0lii9B8ibLYq",
+  "tags": []
+}

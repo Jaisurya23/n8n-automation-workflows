@@ -1,0 +1,433 @@
+{
+  "name": "multiple city seriapi search (not completed)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -225
+      ],
+      "id": "efcfc116-3fb2-4a77-9ce3-51cbc2797e44",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0",
+          "mode": "list",
+          "cachedResultName": "serp details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -100,
+        -225
+      ],
+      "id": "7f3c28bf-8dc1-44b6-ada4-11875ba5b8df",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "=\"Manufacturing After market in Michigan\""
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            },
+            {
+              "name": "api_key",
+              "value": "REPLACE_WITH_SERPAPI_API_KEY"
+            },
+            {
+              "name": "start ",
+              "value": "={{ $('Code1').item.json.start }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        -300
+      ],
+      "id": "f726d484-66fd-4267-939b-a1515fc289d8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = items[0].json.local_results || [];\nreturn results.map(company => ({\n  json: {\n    place_id: company.place_id,\n    name: company.title,\n    category: company.type,\n    address: company.address,\n    city: $json[\"cities\"],\n    state: \"Michigan\",\n    country: \"USA\",\n    ratings: company.rating,\n    website: company.website,\n    phone_number: company.phone,\n    search_keyword: $json[\"keywords\"],\n    source_date: new Date().toISOString().split('T')[0]\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        -300
+      ],
+      "id": "475f543a-422d-4d90-bfed-6e49b0fd0f84",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0",
+          "mode": "list",
+          "cachedResultName": "serp details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1527321154,
+          "mode": "list",
+          "cachedResultName": "result 3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit#gid=1527321154"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "place_id",
+              "displayName": "place_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ratings",
+              "displayName": "ratings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "search_keyword",
+              "displayName": "search_keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_date",
+              "displayName": "source_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1220,
+        -300
+      ],
+      "id": "de020903-0d0e-4b4e-9261-d66cb0343d94",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        560,
+        -220
+      ],
+      "id": "f31b1f41-8388-4c68-9f61-8d9cf4300acf",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nfor (let i = 0; i <= 500; i += 20) {\n  results.push({ json: { start: i } });\n}\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        340,
+        -300
+      ],
+      "id": "4a64027e-0054-4e8d-b07f-833227ae96ed",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        -225
+      ],
+      "id": "ff25f5bf-0f4d-4100-a29a-9fadc1e2fcf9",
+      "name": "Wait",
+      "webhookId": "1a9c345a-85e3-4699-9dd6-b8f238d2dad2"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        120,
+        -220
+      ],
+      "id": "d88be9d4-2ec6-493e-8f17-65f1b19fc822",
+      "name": "Loop Over Items1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0d697a89-92b3-4e38-b940-2c5176d27490",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "754f1595a5333f98c71a385ae239a3c6d1271f14801fcf61c4ad94ceec623443"
+  },
+  "id": "3ao5WSXnxzruqBQ8",
+  "tags": []
+}

@@ -1,0 +1,454 @@
+{
+  "name": "scrape company name with seriapi",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        -25
+      ],
+      "id": "1b972dfb-6364-4e99-8164-8c0382eb9f34",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0",
+          "mode": "list",
+          "cachedResultName": "serp details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -100,
+        -25
+      ],
+      "id": "d832f43f-9ce8-4630-aa05-a9511b41b8d5",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "q",
+              "value": "=\"Aftermarket manufacture company in Michigan\""
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "api_key",
+              "value": "REPLACE_WITH_SERPAPI_API_KEY"
+            },
+            {
+              "name": "start ",
+              "value": "={{ $('Code1').item.json.start }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        -100
+      ],
+      "id": "d70983ef-cce0-4a6a-97eb-14b23cd68c13",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = items[0].json.local_results || [];\nreturn results.map(company => {\n  const addressParts = company.address?.split(',') || [];\n  const city = addressParts.length >= 2 ? addressParts[1].trim() : \"\";\n\n  return {\n    json: {\n      place_id: company.place_id,\n      name: company.title,\n      category: company.type,\n      address: company.address,\n      city: city,\n      state: \"Michigan\",\n      country: \"USA\",\n      ratings: company.rating,\n      website: company.website,\n      phone_number: company.phone,\n      search_keyword: \"Aftermarket manufacturing\",\n      source_date: new Date().toISOString().split('T')[0]\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        -100
+      ],
+      "id": "2e2c3b95-7063-4788-90c9-50fe63643acf",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0",
+          "mode": "list",
+          "cachedResultName": "serp details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 264827975,
+          "mode": "list",
+          "cachedResultName": "Michigan 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/126ABh3Mx9Go6hfSZEzU14-xopVZecDBBSGIdVSZE8H0/edit#gid=264827975"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "place_id",
+              "displayName": "place_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "city",
+              "displayName": "city",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "state",
+              "displayName": "state",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ratings",
+              "displayName": "ratings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "search_keyword",
+              "displayName": "search_keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source_date",
+              "displayName": "source_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        -100
+      ],
+      "id": "632cbbcc-aa6f-489a-8080-3c6b1c6bd48f",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        340,
+        -25
+      ],
+      "id": "3c5e27fc-eb62-4bfb-afc2-adbf0325c243",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = [];\nfor (let i = 0; i <= 2500; i += 20) {\n  results.push({ json: { start: i } });\n}\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        120,
+        -25
+      ],
+      "id": "e63806b1-1946-4526-b1bc-12d57a5d2c76",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1220,
+        -25
+      ],
+      "id": "cd0fa3cf-a43d-438c-abd6-d5063a72b77c",
+      "name": "Wait",
+      "webhookId": "9d0bda8e-9733-4142-a31c-00eb10b4d4b3"
+    },
+    {
+      "parameters": {
+        "content": "## Scrape the data\n\n-- we want to put the serpApi api key and then we want to put the keyword in q values \n\n-- The q act as a search query \n\n-- The function node is use to convert the raw data into the sturcture form to print the google sheet easily",
+        "height": 440,
+        "width": 360,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -380
+      ],
+      "id": "be690524-2fbe-4065-bafe-53067f364623",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Switch pages\n\n-- we use the function node for turn the next page of the serpapi example: In default\n\n-- We give that in json format for the http node and the loop is use to switch the pages \n\n-- Once the first flow was finished the page was turn into 20 for next pages",
+        "height": 420,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -285
+      ],
+      "id": "7f5c939c-5244-4b2b-88fc-b8f337b24cb4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Print the data\n\n-- Once the http node get the info and the function node is arrange the structure we append the values in the google sheet\n\n-- The wait node is use to wait for certain time to avoid the too much api call frequently this will avoid the errors",
+        "height": 460,
+        "width": 380,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -320
+      ],
+      "id": "fe2fe365-08d3-4c1d-a488-13b296de0376",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "823a5851-c7a8-47ba-adb1-91d9da42ceaa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "754f1595a5333f98c71a385ae239a3c6d1271f14801fcf61c4ad94ceec623443"
+  },
+  "id": "EaqXZmRvKbJeKCTo",
+  "tags": []
+}

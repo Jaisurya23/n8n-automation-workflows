@@ -1,0 +1,721 @@
+{
+  "name": "reddit scrapping (template)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "276e2174-1386-4c9e-9fd4-efd28ec98edb",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -140,
+        265
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "835e66ea-c4e8-4de5-af08-58a28ae9f862",
+      "name": "Post Summarization",
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "position": [
+        1560,
+        140
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "6d5c5a40-e5ba-47ef-83ba-400532de19ca",
+      "name": "Merge Input",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        1116,
+        265
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1C8j0GsoXjpNtp-NRClIMCnF6JyiIobl8ugncIRWR4lI",
+          "mode": "list",
+          "cachedResultName": "reddit sample 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8j0GsoXjpNtp-NRClIMCnF6JyiIobl8ugncIRWR4lI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C8j0GsoXjpNtp-NRClIMCnF6JyiIobl8ugncIRWR4lI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "subreddit_subscribers",
+              "displayName": "subreddit_subscribers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "upvotes",
+              "displayName": "upvotes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "postcontent",
+              "displayName": "postcontent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "business_opportunity",
+              "displayName": "business_opportunity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "17e8d8d5-6211-4ab0-b065-5b44eab2294c",
+      "name": "Output The Results",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2760,
+        240
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "3f6a2c6f-9a56-4bfe-b1ab-7890e3d49c45",
+      "name": "Merge 3 Inputs",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        2152,
+        265
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0823d10a-ad54-4d82-bcea-9dd236e97857",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "leftValue": "={{ $json.ups }}",
+              "rightValue": 0
+            },
+            {
+              "id": "539f0f5c-025a-4f82-9b3a-2ef1ad3a2d96",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              },
+              "leftValue": "={{ DateTime.fromSeconds($json.created).toISO() }}",
+              "rightValue": "={{ $today.minus(5,'days').toISO() }}"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6f2e93c8-b9ac-4ebf-a9b7-6cfa4f57a724",
+      "name": "Filter Posts By Features",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        300,
+        260
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "d5d38c01-3a88-4767-b488-d9c04145bb8f",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $('Basic LLM Chain').item.json.text }}",
+              "rightValue": "yes"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "367d1cf3-ffb8-4138-9a0b-c86fd3cbdf1f",
+      "name": "Filter Posts By Content",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1336,
+        265
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5082ecc-3add-474e-bdb5-b8ad64729930",
+              "name": "upvotes",
+              "type": "string",
+              "value": "={{ $json.ups }}"
+            },
+            {
+              "id": "a92b5859-fbcc-40c2-95e0-452b12530d98",
+              "name": "subreddit_subscribers",
+              "type": "number",
+              "value": "={{ $json.subreddit_subscribers }}"
+            },
+            {
+              "id": "a846e21c-6cff-4521-9e0c-a32fa1305376",
+              "name": "postcontent",
+              "type": "string",
+              "value": "={{ $json.selftext }}"
+            },
+            {
+              "id": "b8045389-684d-4872-9e32-9a6b5511eb2b",
+              "name": "url",
+              "type": "string",
+              "value": "={{ $json.url }}"
+            },
+            {
+              "id": "f182fedc-1b09-40fe-aeb5-2473263da442",
+              "name": "date",
+              "type": "string",
+              "value": "={{ DateTime.fromSeconds($json.created).toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7d652b0e-ef02-47eb-b292-bba43f59f4fc",
+      "name": "Select Key Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        520,
+        265
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "location": "allReddit",
+        "keyword": "need angular developer",
+        "additionalFields": {
+          "sort": "new"
+        }
+      },
+      "id": "a6d9c9e8-2fbc-49b9-8223-4ca06c9cd7eb",
+      "name": "Get Posts",
+      "type": "n8n-nodes-base.reddit",
+      "position": [
+        80,
+        260
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "redditOAuth2Api": {
+          "id": "lnEcaZiQ34gnTIls",
+          "name": "Reddit account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Data Extraction\n## Retrieves recent posts from specific Reddit community (subreddit)\n## Filters content by keywords and upvotes",
+        "height": 440,
+        "width": 880
+      },
+      "id": "ee1549c8-0761-4023-9e29-9220adaab717",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "# Transformation Step\n## Analyze using LLM (AI)\n## Filter for business opportunities",
+        "height": 660,
+        "width": 820,
+        "color": 4
+      },
+      "id": "442b9307-6868-4591-8c90-5dc0bb01741f",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        660,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "#Transformation 2nd Step + Load to Gsheet\n## Insight Generation \n## Generates executive summaries of key opportunities\n## Submit findings in Google Sheets",
+        "height": 740,
+        "width": 1460,
+        "color": 6
+      },
+      "id": "f682aecb-5bbf-488e-a3de-04a2f26a0ae7",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1472,
+        -210
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Decide whether this reddit post is describing a business-related problem or a need for a solution.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "The post should mention a specific challenge or requirement that a business is trying to address. Is this post about a business problem or need for a solution ? Output only yes or no"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=Reddit post:  {{ $json.postcontent }}"
+            }
+          ]
+        }
+      },
+      "id": "f597da8a-2315-4711-bdc6-c86af2e871cf",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        740,
+        140
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7038812d-f325-4196-89b6-3623d81dec7b",
+              "name": "summary",
+              "type": "string",
+              "value": "={{ $json.response.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3f0a107a-a08c-4759-821a-7a0bbd69557f",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1940,
+        140
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f34c3f3-7be7-474c-9026-7058807a7b3d",
+              "name": "date",
+              "type": "string",
+              "value": "={{ $json.date }}"
+            },
+            {
+              "id": "0e0e5227-e37b-43fc-8a88-2bb76631108d",
+              "name": "subreddit_subscribers",
+              "type": "number",
+              "value": "={{ $json.subreddit_subscribers }}"
+            },
+            {
+              "id": "68e2ca82-6b1d-42ec-acc7-b784e9ed61b5",
+              "name": "url",
+              "type": "string",
+              "value": "={{ $json.url }}"
+            },
+            {
+              "id": "946800a2-ec8b-4f99-a4db-9248bf305747",
+              "name": "upvotes",
+              "type": "string",
+              "value": "={{ $json.upvotes }}"
+            },
+            {
+              "id": "da86d4d3-db84-44e3-a684-38aff2fd5b77",
+              "name": "postcontent",
+              "type": "string",
+              "value": "={{ $json.postcontent }}"
+            },
+            {
+              "id": "b67148e1-67a5-4b10-be6c-c819ff910be0",
+              "name": "business_opportunity",
+              "type": "string",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5a153561-f812-4145-9ed3-79ba0f188506",
+      "name": "Edit Fields1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1932,
+        390
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        840,
+        360
+      ],
+      "id": "b876f462-b88a-4f59-a4b1-66052672d00b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ommlv15TukoeIYSj",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        360
+      ],
+      "id": "020d81fa-2e26-4aac-9dad-de18fbb044f4",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ommlv15TukoeIYSj",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Analyze the following content for sentiment, relevance, and lead potential. Classify it as either:\n\nPositive (interested/engaged)\n\nNeutral (not decisive, but potentially valuable)\n\nNegative (not interested or potentially harmful).\n\nthe message is : {{ $json.summary }}",
+        "options": {
+          "categories": "Positive, Neutral, Negative"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1,
+      "position": [
+        2380,
+        280
+      ],
+      "id": "9821bda3-140b-4b8b-8ace-46bb5375486d",
+      "name": "Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        500
+      ],
+      "id": "cca652ec-c210-4c5b-b167-26b68f684a14",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ommlv15TukoeIYSj",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Posts": {
+      "main": [
+        [
+          {
+            "node": "Filter Posts By Features",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge 3 Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Input": {
+      "main": [
+        [
+          {
+            "node": "Filter Posts By Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge 3 Inputs",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge 3 Inputs": {
+      "main": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Merge Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Key Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge Input",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Summarization": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Posts By Content": {
+      "main": [
+        [
+          {
+            "node": "Post Summarization",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Posts By Features": {
+      "main": [
+        [
+          {
+            "node": "Select Key Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Post Summarization",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0f56cdef-df41-4c01-af64-f6003a9a92b1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "754f1595a5333f98c71a385ae239a3c6d1271f14801fcf61c4ad94ceec623443"
+  },
+  "id": "7NSQN6TcXLkQGz5O",
+  "tags": []
+}

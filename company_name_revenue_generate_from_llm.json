@@ -1,0 +1,399 @@
+{
+  "name": "company name revenue generate from llm",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        405
+      ],
+      "id": "d7f67bf4-f4bc-4ca0-aea4-469880c1a84e",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a data enrichment assistant helping with B2B company qualification. Given the following company information:\n\nName: {{ $json.Name }}\nCategory: {{ $json.Category }}\nAddress: {{ $json.Address }}, {{ $json.City }}, {{ $json['State '] }}, {{ $json['Country code'] }}\nWebsite: {{ $json['Web site '] }}\nPhone: {{ $json['phone number'] }}\n\nDo the following:\n1. Estimate the company's revenue in USD (e.g., \"$250M\", \"$1.2B\", or \"Unknown\").\n2. Set `flag` to `true` if the estimated revenue is **around $50M** (i.e., between $49M and $51M), otherwise `false`.\n3. Determine if the company is related to the **aftermarket** sector by checking if the name or category includes keywords like \"aftermarket\", \"auto parts\", etc.\n\nReturn a single merged JSON object that includes **all input fields**, along with:\n- `\"revenue\"`: estimated value\n- `\"flag\"`: true/false\n- `\"aftermarket\"`: true/false\n\nRespond in **raw JSON only**, like:\n```json\n{\n  \"Name\": \"ABC Corp\",\n  \"Category\": \"Auto parts manufacturer\",\n  \"Address\": \"123 Example St\",\n  \"City\": \"Detroit\",\n  \"State \": \"Michigan\",\n  \"Country code\": \"US\",\n  \"Web site \": \"http://example.com\",\n  \"phone number\": \"(123) 456-7890\",\n  \"revenue\": \"$50M\",\n  \"flag\": true,\n  \"aftermarket\": true\n}\n",
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        660,
+        280
+      ],
+      "id": "4d1e27a3-2d1c-4b45-abca-3409daff8415",
+      "name": "Basic LLM Chain1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ",
+          "mode": "list",
+          "cachedResultName": "company details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1808596898,
+          "mode": "list",
+          "cachedResultName": "Sheet3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ/edit#gid=1808596898"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        405
+      ],
+      "id": "27c4427a-cd39-41ef-8209-b37746b7686b",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        440,
+        405
+      ],
+      "id": "a3fdc33c-3f43-4881-8a68-5f1f97472c9f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"row_number\": { \"type\": \"integer\" },\n      \"Name\": { \"type\": \"string\" },\n      \"Category\": { \"type\": \"string\" },\n      \"Address\": { \"type\": \"string\" },\n      \"City\": { \"type\": \"string\" },\n      \"State \": { \"type\": \"string\" },\n      \"Country code\": { \"type\": \"string\" },\n      \"Web site \": { \"type\": \"string\" },\n      \"phone number\": { \"type\": \"string\" },\n      \"revenue\": { \"type\": \"string\" },\n      \"flag\": { \"type\": \"boolean\" },\n      \"aftermarket\": { \"type\": \"boolean\" }\n    },\n    \"required\": [\n      \"row_number\",\n      \"Name\",\n      \"Category\",\n      \"Address\",\n      \"City\",\n      \"State \",\n      \"Country code\",\n      \"Web site \",\n      \"phone number\",\n      \"revenue\",\n      \"flag\",\n      \"aftermarket\"\n    ]\n  }\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        500
+      ],
+      "id": "46d9fcbf-2617-407c-96f1-4dd274ea0b66",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ",
+          "mode": "list",
+          "cachedResultName": "company details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 448806580,
+          "mode": "list",
+          "cachedResultName": "Sheet4",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10RhMsfIL_jtJ3Brx5gOZDuWAQG7jjVeKbD2bIQkR2HQ/edit#gid=448806580"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1256,
+        405
+      ],
+      "id": "be7fed3e-1fdd-492f-b04f-e3ee6b992662",
+      "name": "Google Sheets2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-04-17-thinking",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        688,
+        500
+      ],
+      "id": "0534a252-49c2-4574-9a96-e218d1dd784c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ClZXq5ExhTlM6lFa",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bb0c272a-95a7-4cb4-8235-fd9f420c6e8a",
+              "name": "Name",
+              "value": "={{ $json.output[0].Name }}",
+              "type": "string"
+            },
+            {
+              "id": "87c74ab1-f63c-45fe-87a2-1c14250afa2b",
+              "name": "Category",
+              "value": "={{ $('Google Sheets1').item.json.Category }}",
+              "type": "string"
+            },
+            {
+              "id": "9d4dc0d9-d566-4933-b2ae-536b09e4653e",
+              "name": "Address",
+              "value": "={{ $('Google Sheets1').item.json.Address }}",
+              "type": "string"
+            },
+            {
+              "id": "1245375b-7d46-4865-9b98-f2dedfc331bc",
+              "name": "City",
+              "value": "={{ $('Google Sheets1').item.json.City }}",
+              "type": "string"
+            },
+            {
+              "id": "60bcd873-eea7-456d-b8e1-b5dfe55600a4",
+              "name": "State ",
+              "value": "={{ $('Google Sheets1').item.json['State '] }}",
+              "type": "string"
+            },
+            {
+              "id": "17a89d67-3227-444c-bd71-2f55af228d64",
+              "name": "Country code",
+              "value": "={{ $('Google Sheets1').item.json['Country code'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ec5283af-af63-45d2-9324-0601bff64c98",
+              "name": "Web site ",
+              "value": "={{ $('Google Sheets1').item.json['Web site '] }}",
+              "type": "string"
+            },
+            {
+              "id": "1cb38dc1-ee7e-4a75-ad6e-9ad9057c0747",
+              "name": "phone number",
+              "value": "={{ $('Google Sheets1').item.json['phone number'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3f7a6683-244b-45a9-acf1-6dc2fb46a28a",
+              "name": "Revenue",
+              "value": "={{ $json.output[0].revenue }}",
+              "type": "string"
+            },
+            {
+              "id": "b892b3c4-9017-48c0-b928-f225befdf831",
+              "name": "Flag",
+              "value": "={{ $json.output[0].flag }}",
+              "type": "boolean"
+            },
+            {
+              "id": "9ed9c122-1660-419a-80af-65069b01a8b0",
+              "name": "Aftermarket",
+              "value": "={{ $json.output[0].aftermarket }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        280
+      ],
+      "id": "f1a43ccd-4cad-437d-9054-fb525117b9b8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## Loop the process\n-- The details in google sheet are send to loop \n\n-- In loop we split into batch example: here we split into 5 \n\n-- For one loop it send the 5 company to the llm \n\n-- After that the loop give another 5 company to llm until the loop completed\n\n",
+        "height": 440,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        120
+      ],
+      "id": "90819529-b6d2-4f0e-bef1-4c5888dfb417",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Generate the revenue \n \n-- we use the gemini - 2.5 pro for the revenue generate it give good values compare to others\n\n-- the prompt is given in the llm node and the input data was inserted in the json form.\n\n-- the output parse is used for structure the output data which come form the llm\n",
+        "height": 640,
+        "width": 360,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        620,
+        40
+      ],
+      "id": "43a17373-ec7f-4411-95e8-fb991b9b2353",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Print the result\n\n--we use the edit node for map the output automatically in google sheet \n\n-- The result was stored in the google sheet \n\n-- It will append in the google sheet\n",
+        "height": 560,
+        "width": 340,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        40
+      ],
+      "id": "91511f7a-7051-49b6-ba10-882de3ecbf99",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "10d1d892-de41-48f5-9a8b-632a2a840aaa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "754f1595a5333f98c71a385ae239a3c6d1271f14801fcf61c4ad94ceec623443"
+  },
+  "id": "PhAJZizn5jmVtKvm",
+  "tags": []
+}

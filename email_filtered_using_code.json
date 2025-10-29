@@ -1,0 +1,297 @@
+{
+  "name": "email filtered using code",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        -380
+      ],
+      "id": "1c2ddb80-a7aa-48bb-b7e2-377f08ad98e2",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "simple": false,
+        "filters": {
+          "includeSpamTrash": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        20,
+        -380
+      ],
+      "id": "d4f5a572-c4c0-4321-9450-e0a6972eac46",
+      "name": "Gmail",
+      "webhookId": "94905d4c-ca1c-4163-a57c-fe732f2cb68d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fyQYejk148cfSh1C",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c4370d5e-d5c1-4fd6-9cff-82356e22abab",
+              "name": "From email",
+              "value": "={{ $('Gmail').item.json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "aaecf78c-e823-4831-9fe2-da8e035b377a",
+              "name": "Name",
+              "value": "={{ $('Gmail').item.json.from.value[0].name }}",
+              "type": "string"
+            },
+            {
+              "id": "ad285ec9-f501-41d0-adff-44038efbbc29",
+              "name": "headers.subject",
+              "value": "={{ $('Gmail').item.json.headers.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "72e52384-36b8-4d2a-aeec-9cc20515ca4d",
+              "name": "text",
+              "value": "={{ $('Gmail').item.json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        -380
+      ],
+      "id": "015a1be4-cd14-4438-a6b7-e80895f87cd9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1NbXQAN_k55o7Vsc70DE4nR4UuxQcQ9w_dqTWX1seJXU",
+          "mode": "list",
+          "cachedResultName": "email filtered",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NbXQAN_k55o7Vsc70DE4nR4UuxQcQ9w_dqTWX1seJXU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NbXQAN_k55o7Vsc70DE4nR4UuxQcQ9w_dqTWX1seJXU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "From email",
+              "displayName": "From email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "headers",
+              "displayName": "headers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        900,
+        -380
+      ],
+      "id": "8d9c65c9-0ad3-4718-8964-ba80e3a71906",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "qe4jgwJaIkSu0ne0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const keywords = ['delivery','order'];\n\nconst results = [];\n\nfor (const item of items) {\n  const bodyText = (item.json.body || '').toLowerCase();\n  const subjectText = (item.json.subject || '').toLowerCase();\n\n  const keywordFound = keywords.some(keyword =>\n    bodyText.includes(keyword) || subjectText.includes(keyword)\n  );\n\n  results.push({\n    json: {\n      from: item.json.from,\n      subject: item.json.subject,\n      body: item.json.body,\n      match: keywordFound  // 💡 true or false\n    }\n  });\n}\n\nreturn results;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -380
+      ],
+      "id": "640d3f84-96f6-4a97-ace5-c31ba1fed434",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "92c11c8e-d8a1-4bbe-b265-9802acec9591",
+              "leftValue": "={{ $json.match }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        -380
+      ],
+      "id": "139d7625-4016-4738-83de-e045db69ca9f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "## Read the gmail and separate with those keywords\nwhen keyword is there we give boolen values\n\n",
+        "height": 400,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        -620
+      ],
+      "id": "a59323b3-0c44-4134-876b-fe4aea7cdbad",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e44adbbc-2bfb-480f-8eaf-79a3d704b80e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "754f1595a5333f98c71a385ae239a3c6d1271f14801fcf61c4ad94ceec623443"
+  },
+  "id": "TQ7qqRjOfKKc9fgp",
+  "tags": []
+}
